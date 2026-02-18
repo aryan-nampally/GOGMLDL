@@ -1,0 +1,28 @@
+# Manim default output
+media/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+venv/
+
+# Manim partial renders and temp files
+**/partial_movie_files/
+**/Tex/
+**/texts/
+
+# Keep only final mp4s, ignore low quality renders
+assets/manim/videos/manim_animations/480p15/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store

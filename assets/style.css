@@ -1,0 +1,45 @@
+/* Global Styles */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+html, body, [class*="css"]  {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Glassmorphism Cards */
+.stCard {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+/* Custom Headers */
+h1, h2, h3 {
+    font-weight: 700 !important;
+    background: linear-gradient(90deg, #4F8BF9, #9B5DE5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Buttons */
+.stButton>button {
+    background: linear-gradient(90deg, #4F8BF9, #9B5DE5);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.stButton>button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(79, 139, 249, 0.4);
+}
+
+/* Sliders */
+.stSlider > div > div > div > div {
+    background-color: #4F8BF9;
+}
