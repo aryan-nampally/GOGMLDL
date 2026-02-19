@@ -1,0 +1,9 @@
+/* RegressionLab — page-specific overrides only */
+.regression-page {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.concept-area {
+    margin-top: 24px;
+}

@@ -1,0 +1,79 @@
+/* ClassificationLab — page-specific overrides only */
+.classification-page {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Confusion Matrix */
+.confusion-matrix {
+    padding: 20px;
+    margin-top: 24px;
+}
+
+.cm-grid {
+    display: grid;
+    grid-template-columns: auto 1fr 1fr;
+    gap: 8px;
+    align-items: center;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.cm-header {
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.cm-label {
+    font-weight: 600;
+    text-align: right;
+    color: var(--text-secondary);
+    padding-right: 12px;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.cm-cell {
+    padding: 16px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.cm-tn {
+    background: rgba(6, 214, 160, 0.1);
+    color: #06D6A0;
+    border: 1px solid rgba(6, 214, 160, 0.3);
+}
+
+.cm-tp {
+    background: rgba(6, 214, 160, 0.1);
+    color: #06D6A0;
+    border: 1px solid rgba(6, 214, 160, 0.3);
+}
+
+.cm-fp {
+    background: rgba(249, 115, 22, 0.1);
+    color: #F97316;
+    border: 1px solid rgba(249, 115, 22, 0.3);
+}
+
+.cm-fn {
+    background: rgba(236, 72, 153, 0.1);
+    /* Pink for FN (Misses) */
+    color: #EC4899;
+    border: 1px solid rgba(236, 72, 153, 0.3);
+}
+
+.cm-cell:hover {
+    transform: scale(1.02);
+    filter: brightness(1.2);
+}
