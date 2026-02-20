@@ -27,8 +27,9 @@ router.post('/feedback', async (req, res) => {
 // GET /api/admin/feedbacks — fetch all feedbacks (admin only)
 router.get('/admin/feedbacks', async (req, res) => {
     try {
-        const key = req.headers['x-admin-key'];
-        if (key !== process.env.ADMIN_KEY) return res.status(403).json({ error: 'Forbidden' });
+        const key = (req.headers['x-admin-key'] || '').toString();
+        const adminKey = (process.env.ADMIN_KEY || '').trim();
+        if (!adminKey || key !== adminKey) return res.status(403).json({ error: 'Forbidden' });
 
         const feedbacks = await Feedback.find().sort({ createdAt: -1 }).lean();
         res.json(feedbacks);
@@ -41,8 +42,9 @@ router.get('/admin/feedbacks', async (req, res) => {
 // GET /api/admin/stats — quick summary stats
 router.get('/admin/stats', async (req, res) => {
     try {
-        const key = req.headers['x-admin-key'];
-        if (key !== process.env.ADMIN_KEY) return res.status(403).json({ error: 'Forbidden' });
+        const key = (req.headers['x-admin-key'] || '').toString();
+        const adminKey = (process.env.ADMIN_KEY || '').trim();
+        if (!adminKey || key !== adminKey) return res.status(403).json({ error: 'Forbidden' });
 
         const total = await Feedback.countDocuments();
         const avgRating = await Feedback.aggregate([{ $group: { _id: null, avg: { $avg: '$rating' } } }]);

@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     }
 
     const key = req.headers['x-admin-key'];
-    if (key !== process.env.ADMIN_KEY) {
+    if (key !== (process.env.ADMIN_KEY || '').trim()) {
         return res.status(403).json({ error: 'Forbidden' });
     }
 
