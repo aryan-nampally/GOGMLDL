@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: mlatlas-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "4000"
+      - key: MONGO_URI
+        value: mongodb+srv://nampallyaryan688_db_user:8dIIkXKWgJ5CTP0z@cluster0.2jum5sf.mongodb.net/mlgrphy?retryWrites=true&w=majority
+      - key: ADMIN_KEY
+        value: aryan_mlgrphy_admin_2026
+      - key: FRONTEND_ORIGIN
+        value: https://mlatlas-interactive-playground.vercel.app
