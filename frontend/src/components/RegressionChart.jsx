@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 import Plot from 'react-plotly.js';
 
+const PLOTLY_CONFIG = { responsive: true, displayModeBar: 'hover', displaylogo: false, scrollZoom: false };
+
 export default function RegressionChart({ X, y, slope, intercept, title }) {
     const lineData = useMemo(() => {
         const xMin = Math.min(...X);
@@ -31,6 +33,7 @@ export default function RegressionChart({ X, y, slope, intercept, title }) {
                 title: title ? { text: title, font: { size: 13, color: '#8a8a8a' } } : undefined,
                 xaxis: { title: 'X', gridcolor: 'rgba(255,255,255,0.04)', zerolinecolor: 'rgba(255,255,255,0.08)' },
                 yaxis: { title: 'y', gridcolor: 'rgba(255,255,255,0.04)', zerolinecolor: 'rgba(255,255,255,0.08)' },
+                uirevision: 'keep',
                 height: 400,
                 margin: { l: 50, r: 20, t: 40, b: 40 },
                 paper_bgcolor: 'rgba(0,0,0,0)',
@@ -39,7 +42,8 @@ export default function RegressionChart({ X, y, slope, intercept, title }) {
                 legend: { x: 0.01, y: 0.99, font: { size: 11, color: '#8a8a8a' } },
                 font: { color: '#8a8a8a' },
             }}
-            config={{ displayModeBar: false, responsive: true }}
+            config={PLOTLY_CONFIG}
+            useResizeHandler
             style={{ width: '100%' }}
         />
     );

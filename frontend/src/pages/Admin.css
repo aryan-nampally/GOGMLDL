@@ -1,0 +1,255 @@
+/* ── Admin Page ── */
+.admin-page {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.admin-header h1 {
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+/* Login */
+.admin-login {
+    max-width: 400px;
+    margin: 80px auto 0;
+    padding: 36px;
+    text-align: center;
+}
+
+.admin-login h2 {
+    margin: 0 0 8px;
+}
+
+.admin-login p {
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+}
+
+.admin-login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Stats */
+.admin-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.admin-stat-card {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.admin-stat-card.wide {
+    grid-column: 1 / -1;
+    align-items: stretch;
+}
+
+.stat-num {
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-label {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+/* Area bars */
+.area-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.area-bar-row {
+    display: grid;
+    grid-template-columns: 160px 1fr 32px;
+    align-items: center;
+    gap: 10px;
+}
+
+.area-bar-label {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    text-align: right;
+}
+
+.area-bar-track {
+    height: 8px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+}
+
+.area-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--blue), var(--purple));
+    min-width: 4px;
+    transition: width 0.4s ease;
+}
+
+.area-bar-count {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+}
+
+/* Filter */
+.admin-filter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.filter-pill {
+    padding: 5px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border-subtle);
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-family: var(--font-body);
+    transition: all 0.2s;
+}
+
+.filter-pill:hover {
+    border-color: var(--blue);
+}
+
+.filter-pill.active {
+    background: rgba(79, 139, 249, 0.12);
+    border-color: var(--blue);
+    color: var(--blue);
+    font-weight: 600;
+}
+
+/* Table */
+.admin-table-wrap {
+    overflow-x: auto;
+    padding: 0;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.admin-table th {
+    text-align: left;
+    padding: 14px 16px;
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-subtle);
+    white-space: nowrap;
+}
+
+.admin-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    vertical-align: top;
+}
+
+.admin-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.row-num {
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+}
+
+.row-name {
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+}
+
+.row-areas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.area-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(79, 139, 249, 0.1);
+    color: var(--blue);
+    font-size: 0.72rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.row-comment {
+    max-width: 260px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.row-date {
+    white-space: nowrap;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    font-family: var(--font-mono);
+}
+
+/* Stars */
+.admin-stars {
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+}
+
+.star-filled {
+    color: #f59e0b;
+}
+
+.star-empty {
+    color: var(--border-subtle);
+}
+
+@media (max-width: 768px) {
+    .admin-stats {
+        grid-template-columns: 1fr;
+    }
+    .area-bar-row {
+        grid-template-columns: 100px 1fr 28px;
+    }
+}

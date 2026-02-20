@@ -26,3 +26,6 @@ assets/manim/videos/manim_animations/480p15/
 # OS
 Thumbs.db
 .DS_Store
+
+# Backend
+backend/node_modules/

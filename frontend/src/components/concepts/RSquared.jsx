@@ -1,5 +1,8 @@
 import { useState, useMemo } from 'react';
 import Plot from 'react-plotly.js';
+import VideoEmbed from '../VideoEmbed';
+
+const PLOTLY_CONFIG = { responsive: true, displayModeBar: 'hover', displaylogo: false, scrollZoom: false };
 
 export default function RSquared() {
     const [showMean, setShowMean] = useState(true);
@@ -50,11 +53,8 @@ export default function RSquared() {
 
     return (
         <div>
-            <div className="video-card" style={{ marginBottom: 24 }}>
-                <div style={{ padding: '12px 16px', fontSize: '0.88rem', fontWeight: 500, color: 'var(--text-secondary)' }}>
-                    🎬 Understanding R-Squared Visually
-                </div>
-                <video src="/videos/RSquaredAnim.mp4" controls style={{ width: '100%', display: 'block' }} />
+            <div style={{ marginBottom: 24 }}>
+                <VideoEmbed src="/videos/RSquaredAnim.mp4" label="🎬 Understanding R-Squared Visually" />
             </div>
 
             <h3 style={{ marginBottom: 8 }}>📊 How Good Is the Fit?</h3>
@@ -80,6 +80,7 @@ export default function RSquared() {
                         xaxis: { gridcolor: 'rgba(255,255,255,0.04)', zerolinecolor: 'rgba(255,255,255,0.08)' },
                         yaxis: { gridcolor: 'rgba(255,255,255,0.04)', zerolinecolor: 'rgba(255,255,255,0.08)' },
                         shapes,
+                        uirevision: 'keep',
                         height: 380,
                         margin: { l: 40, r: 20, t: 20, b: 30 },
                         paper_bgcolor: 'rgba(0,0,0,0)',
@@ -88,7 +89,8 @@ export default function RSquared() {
                         legend: { x: 0.01, y: 0.99, font: { size: 11, color: '#8a8a8a' } },
                         font: { color: '#8a8a8a' },
                     }}
-                    config={{ displayModeBar: false, responsive: true }}
+                    config={PLOTLY_CONFIG}
+                    useResizeHandler
                     style={{ width: '100%' }}
                 />
             </div>

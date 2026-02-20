@@ -6,6 +6,7 @@ const DARK_LAYOUT = {
     plot_bgcolor: 'rgba(0,0,0,0)',
     font: { color: '#E0E0E0', family: 'Inter, sans-serif' }, // Brighter text
     margin: { l: 50, r: 20, t: 40, b: 40 },
+    uirevision: 'keep',
     showlegend: true,
     legend: { x: 0.01, y: 0.99, font: { size: 12, color: '#E0E0E0' }, bgcolor: 'rgba(0,0,0,0.6)', bordercolor: '#333', borderwidth: 1 },
     xaxis: {
@@ -23,7 +24,7 @@ const DARK_LAYOUT = {
         tickfont: { size: 11, color: '#AAA' }
     },
 };
-const CFG = { displayModeBar: false, responsive: true };
+const CFG = { responsive: true, displayModeBar: 'hover', displaylogo: false, scrollZoom: false };
 // Manim-inspired colors (Teal, Blue, Red, Yellow...)
 const COLORS = ['#88E0EF', '#FF5B5B', '#FFFF66', '#B0B0B0', '#FF99FF', '#66FF66'];
 
@@ -74,6 +75,7 @@ export function ClassificationChart({ X, y, yPred, title }) {
                 height: 420,
             }}
             config={CFG}
+            useResizeHandler
             style={{ width: '100%' }}
         />
     );
@@ -124,6 +126,7 @@ export function ClusterChart({ X, labels, title }) {
                 height: 420,
             }}
             config={CFG}
+            useResizeHandler
             style={{ width: '100%' }}
         />
     );
@@ -160,6 +163,7 @@ export function EmbeddingChart({ projected, labels, title }) {
                 height: 420,
             }}
             config={CFG}
+            useResizeHandler
             style={{ width: '100%' }}
         />
     );
@@ -194,6 +198,7 @@ export function VarianceChart({ varianceRatio }) {
                 showlegend: false,
             }}
             config={CFG}
+            useResizeHandler
             style={{ width: '100%' }}
         />
     );
@@ -240,6 +245,7 @@ export function AnomalyChart({ X, yTrue, yPred, title }) {
                 height: 420,
             }}
             config={CFG}
+            useResizeHandler
             style={{ width: '100%' }}
         />
     );
@@ -278,6 +284,7 @@ export function ROCChart({ fpr, tpr, auc }) {
                 showlegend: true,
             }}
             config={CFG}
+            useResizeHandler
             style={{ width: '100%' }}
         />
     );
@@ -309,6 +316,7 @@ export function PRChart({ precision, recall, auc }) {
                 showlegend: true,
             }}
             config={CFG}
+            useResizeHandler
             style={{ width: '100%' }}
         />
     );
@@ -337,6 +345,7 @@ export function ElbowChart({ ks, inertias }) {
                 showlegend: false,
             }}
             config={CFG}
+            useResizeHandler
             style={{ width: '100%' }}
         />
     );
@@ -403,6 +412,7 @@ export function SilhouetteChart({ silhouetteSamples, labels, avgScore }) {
                 }]
             }}
             config={CFG}
+            useResizeHandler
             style={{ width: '100%' }}
         />
     );
@@ -451,6 +461,7 @@ export function FeatureImportanceChart({ importances, featureNames }) {
                 margin: { l: 100, r: 20, t: 40, b: 40 },
             }}
             config={CFG}
+            useResizeHandler
             style={{ width: '100%' }}
         />
     );

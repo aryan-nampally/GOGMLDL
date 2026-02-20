@@ -6,9 +6,11 @@ const NAV_ITEMS = [
     { to: '/regression', label: 'Regression', icon: '📈', section: 'Supervised' },
     { to: '/classification', label: 'Classification', icon: '🎯', section: 'Supervised' },
     { to: '/ensemble', label: 'Ensemble', icon: '🌲', section: 'Supervised' },
+    { to: '/neural', label: 'Neural Networks', icon: '🧠', section: 'Supervised' },
     { to: '/clustering', label: 'Clustering', icon: '🔮', section: 'Unsupervised' },
     { to: '/dimensionality', label: 'Dim Reduction', icon: '🗺️', section: 'Unsupervised' },
     { to: '/anomaly', label: 'Anomaly', icon: '🔍', section: 'Unsupervised' },
+    { to: '/feedback', label: 'Feedback', icon: '💬', section: 'Meta' },
 ];
 
 export default function Sidebar({ collapsed, onToggle }) {
@@ -47,6 +49,14 @@ export default function Sidebar({ collapsed, onToggle }) {
 
                 {!collapsed && <div className="nav-section-label">Unsupervised</div>}
                 {NAV_ITEMS.filter((item) => item.section === 'Unsupervised').map((item) => (
+                    <NavLink key={item.to} to={item.to} className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                        <span className="nav-icon">{item.icon}</span>
+                        {!collapsed && <span>{item.label}</span>}
+                    </NavLink>
+                ))}
+
+                {!collapsed && <div className="nav-section-label">Meta</div>}
+                {NAV_ITEMS.filter((item) => item.section === 'Meta').map((item) => (
                     <NavLink key={item.to} to={item.to} className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
                         <span className="nav-icon">{item.icon}</span>
                         {!collapsed && <span>{item.label}</span>}

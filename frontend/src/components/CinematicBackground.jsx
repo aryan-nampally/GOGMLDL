@@ -24,6 +24,8 @@ export default function CinematicBackground() {
     const starsRef = useRef([]);
     const sparklesRef = useRef([]);
     const lastStarRef = useRef(0);
+    const reduceMotionRef = useRef(false);
+    const isVisibleRef = useRef(true);
     const { focused } = useFocus();
 
     // ── Initialize neural nodes ──
@@ -91,11 +93,28 @@ export default function CinematicBackground() {
         const ctx = canvas.getContext('2d');
         let w, h;
 
+        const media = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+        reduceMotionRef.current = !!media?.matches;
+        isVisibleRef.current = !document.hidden;
+
+        const stopLoop = () => {
+            if (frameRef.current) cancelAnimationFrame(frameRef.current);
+            frameRef.current = null;
+        };
+
+        const startLoop = () => {
+            if (frameRef.current) return;
+            if (reduceMotionRef.current || !isVisibleRef.current) return;
+            frameRef.current = requestAnimationFrame(draw);
+        };
+
         const resize = () => {
             w = window.innerWidth;
             h = window.innerHeight;
-            canvas.width = w;
-            canvas.height = h;
+            const dpr = Math.min(2, window.devicePixelRatio || 1);
+            canvas.width = Math.floor(w * dpr);
+            canvas.height = Math.floor(h * dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
             if (nodesRef.current.length === 0) initNodes(w, h);
         };
 
@@ -107,12 +126,36 @@ export default function CinematicBackground() {
         };
         window.addEventListener('mousemove', handleMouse);
 
+        const handleVisibility = () => {
+            isVisibleRef.current = !document.hidden;
+            if (!isVisibleRef.current) stopLoop();
+            else startLoop();
+        };
+        document.addEventListener('visibilitychange', handleVisibility);
+
+        const handleMediaChange = (e) => {
+            reduceMotionRef.current = !!e.matches;
+            if (reduceMotionRef.current) {
+                stopLoop();
+                // Render a single static frame.
+                draw(performance.now(), true);
+            } else {
+                // Reset star cadence so we don't instantly spawn.
+                lastStarRef.current = performance.now();
+                startLoop();
+            }
+        };
+        if (media?.addEventListener) media.addEventListener('change', handleMediaChange);
+        else if (media?.addListener) media.addListener(handleMediaChange);
+
         // Spawn first star quickly
         spawnStar(w || window.innerWidth, h || window.innerHeight);
 
         // ── Render Loop ──
-        const draw = (time) => {
+        const draw = (time, forceStatic = false) => {
             ctx.clearRect(0, 0, w, h);
+
+            const animateStep = !forceStatic && !reduceMotionRef.current;
 
             const mx = mouseRef.current.x;
             const my = mouseRef.current.y;
@@ -125,9 +168,11 @@ export default function CinematicBackground() {
 
             for (let i = 0; i < nodes.length; i++) {
                 const n = nodes[i];
-                n.x += n.vx;
-                n.y += n.vy;
-                n.pulse += n.pulseSpeed;
+                if (animateStep) {
+                    n.x += n.vx;
+                    n.y += n.vy;
+                    n.pulse += n.pulseSpeed;
+                }
 
                 if (n.x < -20) n.x = w + 20;
                 if (n.x > w + 20) n.x = -20;
@@ -172,7 +217,7 @@ export default function CinematicBackground() {
             }
 
             // ── Layer: Shooting Stars ──
-            if (time - lastStarRef.current > 4000 + Math.random() * 6000) {
+            if (animateStep && time - lastStarRef.current > 4000 + Math.random() * 6000) {
                 spawnStar(w, h);
                 lastStarRef.current = time;
             }
@@ -182,10 +227,12 @@ export default function CinematicBackground() {
 
             for (let i = stars.length - 1; i >= 0; i--) {
                 const s = stars[i];
-                s.x += s.vx;
-                s.y += s.vy;
-                s.life -= s.decay;
-                s.sparkleTimer++;
+                if (animateStep) {
+                    s.x += s.vx;
+                    s.y += s.vy;
+                    s.life -= s.decay;
+                    s.sparkleTimer++;
+                }
 
                 if (s.life <= 0 || s.x < -100 || s.x > w + 100 || s.y > h + 100) {
                     stars.splice(i, 1);
@@ -244,7 +291,7 @@ export default function CinematicBackground() {
                 ctx.fill();
 
                 // Sparkle particles
-                if (s.sparkleTimer % 3 === 0 && s.life > 0.3) {
+                if (animateStep && s.sparkleTimer % 3 === 0 && s.life > 0.3) {
                     sparkles.push({
                         x: s.x + (Math.random() - 0.5) * 6,
                         y: s.y + (Math.random() - 0.5) * 6,
@@ -270,15 +317,24 @@ export default function CinematicBackground() {
                 ctx.fill();
             }
 
-            frameRef.current = requestAnimationFrame(draw);
+            if (animateStep && isVisibleRef.current) {
+                frameRef.current = requestAnimationFrame(draw);
+            } else {
+                frameRef.current = null;
+            }
         };
 
-        frameRef.current = requestAnimationFrame(draw);
+        // Render an initial frame (static if reduced motion).
+        if (reduceMotionRef.current || !isVisibleRef.current) draw(performance.now(), true);
+        else frameRef.current = requestAnimationFrame(draw);
 
         return () => {
-            cancelAnimationFrame(frameRef.current);
+            stopLoop();
             window.removeEventListener('resize', resize);
             window.removeEventListener('mousemove', handleMouse);
+            document.removeEventListener('visibilitychange', handleVisibility);
+            if (media?.removeEventListener) media.removeEventListener('change', handleMediaChange);
+            else if (media?.removeListener) media.removeListener(handleMediaChange);
         };
     }, [initNodes, spawnStar]);
 

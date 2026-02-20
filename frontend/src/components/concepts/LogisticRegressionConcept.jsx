@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import VideoEmbed from '../VideoEmbed';
 
 export default function LogisticRegressionConcept() {
     return (
@@ -67,47 +67,5 @@ function ConceptCard({ title, icon, content, delay }) {
             <h3 style={{ marginBottom: 8 }}>{title}</h3>
             <p className="text-muted" style={{ lineHeight: 1.5 }}>{content}</p>
         </motion.div>
-    );
-}
-
-
-function VideoEmbed({ src, label }) {
-    const [open, setOpen] = useState(true);
-    return (
-        <div className="video-card">
-            <button
-                onClick={() => setOpen(!open)}
-                style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    background: 'rgba(255,255,255,0.05)',
-                    border: 'none',
-                    borderBottom: open ? '1px solid rgba(255,255,255,0.1)' : 'none',
-                    color: 'var(--text-primary)',
-                    cursor: 'pointer',
-                    textAlign: 'left',
-                    fontSize: '0.95rem',
-                    fontWeight: 600,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                }}
-            >
-                <span>{open ? '▾' : '▸'}</span>
-                {label}
-            </button>
-            {open && (
-                <div style={{ padding: 0 }}>
-                    <video
-                        src={src}
-                        controls
-                        autoPlay
-                        muted
-                        loop
-                        style={{ width: '100%', display: 'block', maxHeight: 400, objectFit: 'contain', background: '#000' }}
-                    />
-                </div>
-            )}
-        </div>
     );
 }

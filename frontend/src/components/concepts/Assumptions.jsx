@@ -1,6 +1,8 @@
 import { useState, useMemo } from 'react';
 import Plot from 'react-plotly.js';
 
+const PLOTLY_CONFIG = { responsive: true, displayModeBar: 'hover', displaylogo: false, scrollZoom: false };
+
 const VIOLATIONS = ['None (Perfect)', 'Non-Linearity (Curved)', 'Heteroscedasticity (Cone)'];
 
 // Seeded random
@@ -110,13 +112,15 @@ export default function Assumptions() {
                         title: { text: `Residual Plot: ${VIOLATIONS[violation]}`, font: { size: 13, color: '#8a8a8a' } },
                         xaxis: { title: 'Predicted', gridcolor: 'rgba(255,255,255,0.04)' },
                         yaxis: { title: 'Residuals', gridcolor: 'rgba(255,255,255,0.04)' },
+                        uirevision: 'keep',
                         height: 320,
                         margin: { l: 50, r: 20, t: 40, b: 40 },
                         paper_bgcolor: 'rgba(0,0,0,0)',
                         plot_bgcolor: 'rgba(0,0,0,0)',
                         font: { color: '#8a8a8a' },
                     }}
-                    config={{ displayModeBar: false, responsive: true }}
+                    config={PLOTLY_CONFIG}
+                    useResizeHandler
                     style={{ width: '100%' }}
                 />
             </div>

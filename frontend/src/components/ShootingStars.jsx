@@ -17,12 +17,19 @@ export default function ShootingStars() {
     const particlesRef = useRef([]);
     const frameRef = useRef(null);
     const lastSpawnRef = useRef(0);
+    const nextSpawnDelayRef = useRef(4500);
+    const reduceMotionRef = useRef(false);
+    const isVisibleRef = useRef(true);
 
     useEffect(() => {
         const canvas = canvasRef.current;
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
         let w, h;
+
+        const media = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+        reduceMotionRef.current = !!media?.matches;
+        isVisibleRef.current = !document.hidden;
 
         const resize = () => {
             const rect = canvas.parentElement.getBoundingClientRect();
@@ -33,6 +40,39 @@ export default function ShootingStars() {
         };
         resize();
         window.addEventListener('resize', resize);
+
+        const stopLoop = () => {
+            if (frameRef.current) cancelAnimationFrame(frameRef.current);
+            frameRef.current = null;
+        };
+
+        const startLoop = () => {
+            if (frameRef.current) return;
+            if (reduceMotionRef.current || !isVisibleRef.current) return;
+            frameRef.current = requestAnimationFrame(draw);
+        };
+
+        const handleVisibility = () => {
+            isVisibleRef.current = !document.hidden;
+            if (!isVisibleRef.current) stopLoop();
+            else startLoop();
+        };
+        document.addEventListener('visibilitychange', handleVisibility);
+
+        const handleMediaChange = (e) => {
+            reduceMotionRef.current = !!e.matches;
+            if (reduceMotionRef.current) {
+                stopLoop();
+                ctx.clearRect(0, 0, w, h);
+            } else {
+                // Reset cadence so we don't instantly spam spawns.
+                lastSpawnRef.current = performance.now();
+                nextSpawnDelayRef.current = 3000 + Math.random() * 5000;
+                startLoop();
+            }
+        };
+        if (media?.addEventListener) media.addEventListener('change', handleMediaChange);
+        else if (media?.addListener) media.addListener(handleMediaChange);
 
         function spawnStar() {
             // Start from top portion, moving diagonally downward
@@ -66,16 +106,23 @@ export default function ShootingStars() {
             });
         }
 
-        // Spawn first one quickly
-        spawnStar();
+        // Spawn first one quickly (unless motion is reduced)
+        if (!reduceMotionRef.current) {
+            spawnStar();
+            lastSpawnRef.current = performance.now();
+            nextSpawnDelayRef.current = 3000 + Math.random() * 5000;
+        }
 
         function draw(time) {
             ctx.clearRect(0, 0, w, h);
 
+            const animateStep = !reduceMotionRef.current;
+
             // Spawn new stars periodically (every 3-8 seconds)
-            if (time - lastSpawnRef.current > 3000 + Math.random() * 5000) {
+            if (animateStep && time - lastSpawnRef.current > nextSpawnDelayRef.current) {
                 spawnStar();
                 lastSpawnRef.current = time;
+                nextSpawnDelayRef.current = 3000 + Math.random() * 5000;
             }
 
             const stars = starsRef.current;
@@ -84,10 +131,12 @@ export default function ShootingStars() {
             // ── Draw stars ──
             for (let i = stars.length - 1; i >= 0; i--) {
                 const s = stars[i];
-                s.x += s.vx;
-                s.y += s.vy;
-                s.life -= s.decay;
-                s.sparkleTimer++;
+                if (animateStep) {
+                    s.x += s.vx;
+                    s.y += s.vy;
+                    s.life -= s.decay;
+                    s.sparkleTimer++;
+                }
 
                 if (s.life <= 0 || s.x < -50 || s.x > w + 50 || s.y > h + 50) {
                     stars.splice(i, 1);
@@ -151,7 +200,7 @@ export default function ShootingStars() {
                 ctx.fill();
 
                 // ── Sparkle particles (every few frames) ──
-                if (s.sparkleTimer % 4 === 0 && s.life > 0.3) {
+                if (animateStep && s.sparkleTimer % 4 === 0 && s.life > 0.3) {
                     particles.push({
                         x: s.x + (Math.random() - 0.5) * 4,
                         y: s.y + (Math.random() - 0.5) * 4,
@@ -177,14 +226,21 @@ export default function ShootingStars() {
                 ctx.fill();
             }
 
-            frameRef.current = requestAnimationFrame(draw);
+            if (!reduceMotionRef.current && isVisibleRef.current) {
+                frameRef.current = requestAnimationFrame(draw);
+            } else {
+                frameRef.current = null;
+            }
         }
 
-        frameRef.current = requestAnimationFrame(draw);
+        if (!reduceMotionRef.current) frameRef.current = requestAnimationFrame(draw);
 
         return () => {
-            cancelAnimationFrame(frameRef.current);
+            if (frameRef.current) cancelAnimationFrame(frameRef.current);
             window.removeEventListener('resize', resize);
+            document.removeEventListener('visibilitychange', handleVisibility);
+            if (media?.removeEventListener) media.removeEventListener('change', handleMediaChange);
+            else if (media?.removeListener) media.removeListener(handleMediaChange);
         };
     }, []);
 

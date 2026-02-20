@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import VideoEmbed from '../VideoEmbed';
 
 export default function KNNConcept() {
     return (
@@ -7,6 +7,7 @@ export default function KNNConcept() {
             <VideoEmbed
                 src="/videos/KNNAnim.mp4"
                 label="🎬 Visualizing k-Nearest Neighbors"
+                autoPlay
             />
 
             <div className="concept-content" style={{ marginTop: 24 }}>
@@ -53,47 +54,6 @@ export default function KNNConcept() {
                     </div>
                 </div>
             </div>
-        </div>
-    );
-}
-
-function VideoEmbed({ src, label }) {
-    const [open, setOpen] = useState(true);
-    return (
-        <div className="video-card glass-card" style={{ overflow: 'hidden' }}>
-            <button
-                onClick={() => setOpen(!open)}
-                style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    background: 'rgba(255,255,255,0.05)',
-                    border: 'none',
-                    borderBottom: open ? '1px solid rgba(255,255,255,0.1)' : 'none',
-                    color: 'var(--text-primary)',
-                    cursor: 'pointer',
-                    textAlign: 'left',
-                    fontSize: '0.95rem',
-                    fontWeight: 600,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                }}
-            >
-                <span>{open ? '▾' : '▸'}</span>
-                {label}
-            </button>
-            {open && (
-                <div style={{ padding: 0 }}>
-                    <video
-                        src={src}
-                        controls
-                        autoPlay
-                        muted
-                        loop
-                        style={{ width: '100%', display: 'block', maxHeight: 400, objectFit: 'contain', background: '#000' }}
-                    />
-                </div>
-            )}
         </div>
     );
 }

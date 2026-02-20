@@ -1,5 +1,8 @@
 import { useState, useMemo } from 'react';
 import Plot from 'react-plotly.js';
+import VideoEmbed from '../VideoEmbed';
+
+const PLOTLY_CONFIG = { responsive: true, displayModeBar: 'hover', displaylogo: false, scrollZoom: false };
 
 export default function GradientDescent() {
     const [lr, setLr] = useState(0.1);
@@ -29,11 +32,8 @@ export default function GradientDescent() {
     return (
         <div>
             {/* Video */}
-            <div className="video-card" style={{ marginBottom: 24 }}>
-                <div style={{ padding: '12px 16px', fontSize: '0.88rem', fontWeight: 500, color: 'var(--text-secondary)' }}>
-                    🎬 Gradient Descent in Action
-                </div>
-                <video src="/videos/GradientDescentAnim.mp4" controls style={{ width: '100%', display: 'block' }} />
+            <div style={{ marginBottom: 24 }}>
+                <VideoEmbed src="/videos/GradientDescentAnim.mp4" label="🎬 Gradient Descent in Action" />
             </div>
 
             <h3 style={{ marginBottom: 8 }}>🧠 Walking Down the Hill</h3>
@@ -74,6 +74,7 @@ export default function GradientDescent() {
                         layout={{
                             xaxis: { title: 'Weight', gridcolor: 'rgba(255,255,255,0.04)', zerolinecolor: 'rgba(255,255,255,0.08)' },
                             yaxis: { title: 'Cost', gridcolor: 'rgba(255,255,255,0.04)', zerolinecolor: 'rgba(255,255,255,0.08)' },
+                            uirevision: 'keep',
                             height: 340,
                             margin: { l: 50, r: 20, t: 20, b: 40 },
                             paper_bgcolor: 'rgba(0,0,0,0)',
@@ -81,7 +82,8 @@ export default function GradientDescent() {
                             showlegend: false,
                             font: { color: '#8a8a8a' },
                         }}
-                        config={{ displayModeBar: false, responsive: true }}
+                        config={PLOTLY_CONFIG}
+                        useResizeHandler
                         style={{ width: '100%' }}
                     />
                 </div>

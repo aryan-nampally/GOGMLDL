@@ -1,5 +1,6 @@
 export default function LearningJourney({ step, steps, beats }) {
     const currentBeat = beats[step] || beats[0];
+    const stepLabel = steps?.[step]?.label;
 
     return (
         <div className="learning-journey glass-card">
@@ -20,6 +21,11 @@ export default function LearningJourney({ step, steps, beats }) {
             <div className="journey-story">
                 <h4>{currentBeat.title}</h4>
                 <p>{currentBeat.text}</p>
+                {stepLabel && (
+                    <p className="journey-now">
+                        Right now: <strong>{stepLabel}</strong>
+                    </p>
+                )}
             </div>
         </div>
     );

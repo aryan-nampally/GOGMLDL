@@ -4,6 +4,7 @@ import { AnimatePresence } from 'framer-motion';
 import Layout from './components/Layout';
 import ToastLayer from './components/ToastLayer';
 import CinematicBackground from './components/CinematicBackground';
+import WelcomePopup from './components/WelcomePopup';
 
 // Lazy load all lab pages
 const Home = lazy(() => import('./pages/Home'));
@@ -13,6 +14,9 @@ const EnsembleLab = lazy(() => import('./pages/EnsembleLab'));
 const ClusteringLab = lazy(() => import('./pages/ClusteringLab'));
 const ReductionLab = lazy(() => import('./pages/ReductionLab'));
 const AnomalyLab = lazy(() => import('./pages/AnomalyLab'));
+const NeuralNetLab = lazy(() => import('./pages/NeuralNetLab'));
+const FeedbackPage = lazy(() => import('./pages/Feedback'));
+const AdminPage = lazy(() => import('./pages/Admin'));
 
 function LoadingFallback() {
   return (
@@ -30,9 +34,10 @@ export default function App() {
     <BrowserRouter>
       <CinematicBackground />
       <ToastLayer />
+      <WelcomePopup />
       <Layout>
         <Suspense fallback={<LoadingFallback />}>
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="sync">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/regression" element={<RegressionLab />} />
@@ -41,6 +46,9 @@ export default function App() {
               <Route path="/clustering" element={<ClusteringLab />} />
               <Route path="/dimensionality" element={<ReductionLab />} />
               <Route path="/anomaly" element={<AnomalyLab />} />
+              <Route path="/neural" element={<NeuralNetLab />} />
+              <Route path="/feedback" element={<FeedbackPage />} />
+              <Route path="/admin" element={<AdminPage />} />
             </Routes>
           </AnimatePresence>
         </Suspense>

@@ -17,6 +17,11 @@ import KNNConcept from '../components/concepts/KNNConcept';
 import LogisticRegressionConcept from '../components/concepts/LogisticRegressionConcept';
 import TeachingFrame from '../components/TeachingFrame';
 import LearningJourney from '../components/LearningJourney';
+import IntroSection from '../components/IntroSection';
+import AlgorithmDeepDive from '../components/AlgorithmDeepDive';
+import MathBlock, { M } from '../components/MathBlock';
+import ComparisonTable from '../components/ComparisonTable';
+import KeyTakeaways from '../components/KeyTakeaways';
 import './ClassificationLab.css';
 
 const ClassificationChart = lazy(() => import('../components/MLCharts').then(m => ({ default: m.ClassificationChart })));
@@ -78,6 +83,122 @@ const ALGORITHMS = [
     { id: 'svm', label: 'SVM', color: '#06D6A0', desc: 'Find the widest margin between classes' },
     { id: 'naiveBayes', label: 'Naive Bayes', color: '#F97316', desc: 'Assume feature independence, multiply probabilities' },
     { id: 'decisionTree', label: 'Decision Tree', color: '#EC4899', desc: 'Split data with yes/no questions until pure groups' },
+];
+
+const ALGORITHM_DIVES = [
+    {
+        id: 'logistic', label: 'Logistic Regression', color: '#4F8BF9', icon: '📈',
+        summary: 'Maps a linear score through a sigmoid function to output class probability between 0 and 1.',
+        intuition: 'Instead of predicting a continuous value, we want a probability. Logistic regression computes a weighted sum of features (just like linear regression), then squashes the output through a sigmoid curve. This converts any real number into a probability between 0 and 1. A threshold (default 0.5) then decides the class.',
+        mathContent: (
+            <>
+                <MathBlock label="Sigmoid Function">{'\\sigma(z) = \\frac{1}{1 + e^{-z}} \\quad \\text{where } z = \\theta^T x'}</MathBlock>
+                <MathBlock label="Log-Loss (Binary Cross-Entropy)">{'J(\\theta) = -\\frac{1}{m} \\sum_{i=1}^{m} \\left[ y^{(i)} \\log(h_\\theta(x^{(i)})) + (1-y^{(i)}) \\log(1-h_\\theta(x^{(i)})) \\right]'}</MathBlock>
+                <MathBlock label="Decision Rule">{'\\hat{y} = \\begin{cases} 1 & \\text{if } \\sigma(\\theta^T x) \\geq \\text{threshold} \\\\ 0 & \\text{otherwise} \\end{cases}'}</MathBlock>
+            </>
+        ),
+        steps: [
+            { title: 'Compute linear score —', text: 'z = θᵀx (weighted sum of features).' },
+            { title: 'Apply sigmoid —', text: 'Convert z to probability p = σ(z).' },
+            { title: 'Optimize —', text: 'Minimize log-loss via gradient descent.' },
+            { title: 'Threshold —', text: 'Compare p with threshold to decide class.' },
+        ],
+        whenToUse: 'Best when you need probability estimates, interpretable coefficients, and a fast linear baseline. Works well for linearly separable classes.',
+        prosAndCons: {
+            pros: ['Outputs calibrated probabilities', 'Fast training, highly interpretable', 'Threshold tunable for precision/recall tradeoff', 'Regularization (L1/L2) available'],
+            cons: ['Cannot capture non-linear boundaries', 'Requires feature engineering for complex patterns', 'Assumes linearity in log-odds', 'Sensitive to correlated features'],
+        },
+    },
+    {
+        id: 'knn', label: 'K-Nearest Neighbors', color: '#9B5DE5', icon: '👥',
+        summary: 'Classifies by finding the k closest training points and taking a majority vote.',
+        intuition: 'KNN is the ultimate "lazy" learner — it memorizes the entire training set and only does work at prediction time. To classify a new point, it measures distance to every stored example, picks the k closest ones, and takes a majority vote. Small k captures local patterns but is noisy; large k is smoother but may miss details.',
+        mathContent: (
+            <>
+                <MathBlock label="Euclidean Distance">{'d(x, x\') = \\sqrt{\\sum_{j=1}^{n} (x_j - x\'_j)^2}'}</MathBlock>
+                <MathBlock label="Prediction">{'\\hat{y} = \\text{mode}\\{ y^{(i)} : x^{(i)} \\in \\text{kNN}(x) \\}'}</MathBlock>
+            </>
+        ),
+        steps: [
+            { title: 'Store training data —', text: 'No training step, just memorize all examples.' },
+            { title: 'Compute distances —', text: 'For new point, measure distance to all stored points.' },
+            { title: 'Select k nearest —', text: 'Pick the k closest training examples.' },
+            { title: 'Vote —', text: 'Majority class among neighbors wins.' },
+        ],
+        whenToUse: 'Best for small datasets with complex, non-linear boundaries. Great first baseline that requires no assumptions about data distribution.',
+        prosAndCons: {
+            pros: ['No training phase, simple to implement', 'Naturally handles multi-class', 'Can capture any decision boundary shape', 'Non-parametric — no assumptions'],
+            cons: ['Slow prediction (O(n) per query)', 'Sensitive to irrelevant features and scale', 'Struggles in high dimensions (curse of dimensionality)', 'Requires choosing k and distance metric'],
+        },
+    },
+    {
+        id: 'svm', label: 'Support Vector Machine', color: '#06D6A0', icon: '🎯',
+        summary: 'Finds the hyperplane that maximizes the margin between classes, supported by a few critical points.',
+        intuition: 'Imagine drawing a line between two groups of points. Many lines could separate them, but SVM finds the one with the widest "highway" (margin) between classes. The points closest to this highway are called support vectors — they alone define the boundary. The wider the margin, the more robust the classifier.',
+        mathContent: (
+            <>
+                <MathBlock label="Optimization Objective">{'\\min_{w,b} \\frac{1}{2} \\|w\\|^2 \\quad \\text{s.t. } y^{(i)}(w^T x^{(i)} + b) \\geq 1 \\; \\forall i'}</MathBlock>
+                <MathBlock label="Soft-Margin (with slack)">{'\\min_{w,b,\\xi} \\frac{1}{2} \\|w\\|^2 + C \\sum_{i=1}^{m} \\xi_i'}</MathBlock>
+            </>
+        ),
+        steps: [
+            { title: 'Find separating hyperplane —', text: 'w·x + b = 0 that splits classes.' },
+            { title: 'Maximize margin —', text: 'Push hyperplane to widest gap between classes.' },
+            { title: 'Allow slack —', text: 'Soft margin (C parameter) permits some misclassification.' },
+            { title: 'Predict —', text: 'New points classified by which side of boundary they fall on.' },
+        ],
+        whenToUse: 'Excellent for medium-sized datasets with clear margins. The C parameter controls the bias-variance tradeoff directly.',
+        prosAndCons: {
+            pros: ['Effective in high-dimensional spaces', 'Memory-efficient (uses only support vectors)', 'Robust against overfitting with proper C', 'Kernel trick enables non-linear boundaries'],
+            cons: ['Slow on large datasets (O(n²) to O(n³))', 'No native probability output', 'Sensitive to feature scaling', 'Hard to interpret in high dimensions'],
+        },
+    },
+    {
+        id: 'naiveBayes', label: 'Naive Bayes', color: '#F97316', icon: '📊',
+        summary: 'Applies Bayes\' theorem with a strong (naive) assumption that all features are independent.',
+        intuition: 'Naive Bayes flips the problem: instead of learning a boundary, it models how likely each feature value is given each class, then uses Bayes\' theorem to compute class probability. The "naive" part is assuming features are independent — which is rarely true but works surprisingly well in practice, especially for text classification.',
+        mathContent: (
+            <>
+                <MathBlock label="Bayes' Theorem">{'P(y|x) = \\frac{P(x|y) \\cdot P(y)}{P(x)}'}</MathBlock>
+                <MathBlock label="Naive Independence Assumption">{'P(x|y) = \\prod_{j=1}^{n} P(x_j|y)'}</MathBlock>
+                <MathBlock label="Decision Rule">{'\\hat{y} = \\arg\\max_{y} P(y) \\prod_{j=1}^{n} P(x_j | y)'}</MathBlock>
+            </>
+        ),
+        steps: [
+            { title: 'Estimate priors —', text: 'P(y) from class frequencies in training data.' },
+            { title: 'Estimate likelihoods —', text: 'P(xⱼ|y) for each feature per class.' },
+            { title: 'Apply Bayes\' rule —', text: 'Multiply prior × all likelihoods.' },
+            { title: 'Predict —', text: 'Choose class with highest posterior probability.' },
+        ],
+        whenToUse: 'Excellent for text classification, spam filtering, and when you have limited data. Works best when features are actually somewhat independent.',
+        prosAndCons: {
+            pros: ['Extremely fast training and prediction', 'Works well with small training sets', 'Handles many features naturally', 'Easy to interpret and update incrementally'],
+            cons: ['Independence assumption rarely holds', 'Cannot learn feature interactions', 'Probability estimates are often poorly calibrated', 'Zero-frequency problem needs smoothing'],
+        },
+    },
+    {
+        id: 'decisionTree', label: 'Decision Tree', color: '#EC4899', icon: '🌳',
+        summary: 'Recursively splits data using yes/no questions on features until reaching pure groups.',
+        intuition: 'A decision tree asks a series of yes/no questions about your features, like a flowchart. At each step, it picks the question that best separates the classes (measured by Gini impurity or information gain). It keeps splitting until groups are pure or a depth limit is reached. The result is a tree you can literally read and explain.',
+        mathContent: (
+            <>
+                <MathBlock label="Gini Impurity">{'G = 1 - \\sum_{k=1}^{K} p_k^2'}</MathBlock>
+                <MathBlock label="Information Gain (Entropy)">{'H = -\\sum_{k=1}^{K} p_k \\log_2(p_k)'}</MathBlock>
+                <MathBlock label="Split Criterion">{'\\text{Gain} = H(\\text{parent}) - \\sum_{j} \\frac{|D_j|}{|D|} H(D_j)'}</MathBlock>
+            </>
+        ),
+        steps: [
+            { title: 'Choose best split —', text: 'Test each feature threshold, pick the one maximizing information gain.' },
+            { title: 'Split data —', text: 'Partition samples into left/right branches.' },
+            { title: 'Recurse —', text: 'Repeat splitting on each branch until stopping criteria.' },
+            { title: 'Predict —', text: 'Follow branch path for new point, return leaf class.' },
+        ],
+        whenToUse: 'Use when interpretability is critical. Great for understanding feature importance. Often used as building blocks for ensemble methods (Random Forest, XGBoost).',
+        prosAndCons: {
+            pros: ['Fully interpretable — can visualize the tree', 'Handles non-linear relationships', 'No feature scaling required', 'Captures feature interactions naturally'],
+            cons: ['Prone to overfitting (deep trees memorize noise)', 'Unstable — small data changes can change entire tree', 'Biased toward features with many levels', 'Greedy splitting may miss globally optimal structure'],
+        },
+    },
 ];
 
 const DATA_SHAPES = [
@@ -171,7 +292,6 @@ export default function ClassificationLab() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
                     <div>
                         <h1 className="gradient-text">Classification Lab</h1>
-                        <p style={{ color: 'var(--text-secondary)', margin: '4px 0 0' }}>{activeAlgo?.desc}</p>
                     </div>
                     <div
                         className={`explain-badge ${explainMode ? 'on' : 'off'}`}
@@ -180,21 +300,93 @@ export default function ClassificationLab() {
                         {explainMode ? '💡 Explain ON' : '💡 Explain OFF'}
                     </div>
                 </div>
-
-                {/* Algorithm Selector */}
-                <div className="algo-selector" style={{ marginTop: 16 }}>
-                    {ALGORITHMS.map((a) => (
-                        <button
-                            key={a.id}
-                            className={`algo-pill ${algorithm === a.id ? 'active' : ''}`}
-                            style={{ '--pill-color': a.color }}
-                            onClick={() => setAlgorithm(a.id)}
-                        >
-                            {a.label}
-                        </button>
-                    ))}
-                </div>
             </div>
+
+            {/* ═══════ INTRODUCTION (GFG-style) ═══════ */}
+            <IntroSection
+                title="What is Classification?"
+                subtitle="Teaching machines to assign labels — the gateway to intelligent decision-making."
+                goalText="Understand how classifiers learn decision boundaries, why different algorithms suit different data geometries, and how to evaluate beyond raw accuracy."
+                paragraphs={[
+                    'Classification is a supervised learning task where the goal is to predict a discrete class label for new observations based on patterns learned from labeled training data. Unlike regression (which predicts continuous values), classification outputs categories — spam vs. not-spam, disease vs. healthy, cat vs. dog.',
+                    'The fundamental challenge is learning a decision boundary — a surface in feature space that separates different classes. Simple algorithms like Logistic Regression learn linear boundaries, while more complex ones like KNN or Decision Trees can capture non-linear, intricate boundaries.',
+                    'Evaluation is nuanced: accuracy alone can be misleading (a spam filter that never flags spam is 95% "accurate" if only 5% of email is spam). Precision, Recall, F1, ROC curves, and confusion matrices give a complete picture of classifier performance.',
+                ]}
+                realWorld={{
+                    title: 'Where is Classification Used?',
+                    items: [
+                        { icon: '📧', text: 'Email spam detection — filtering unwanted messages automatically' },
+                        { icon: '🏥', text: 'Medical diagnosis — detecting disease from symptoms and lab results' },
+                        { icon: '💳', text: 'Fraud detection — flagging suspicious transactions in real-time' },
+                        { icon: '🔤', text: 'Handwriting/OCR recognition — converting images to text characters' },
+                        { icon: '🎭', text: 'Sentiment analysis — classifying reviews as positive, negative, or neutral' },
+                        { icon: '🚗', text: 'Autonomous driving — identifying objects (pedestrian, car, sign) from camera feeds' },
+                    ],
+                }}
+                prerequisites={[
+                    'Understanding of labeled data (each example has an X and a known category Y)',
+                    'Basic concept of distance between data points',
+                    'Intuition about probability (likelihood of an event)',
+                ]}
+            />
+
+            {/* ═══════ MATHEMATICAL FOUNDATION ═══════ */}
+            <div className="section-divider-labeled"><span>Mathematical Foundation</span></div>
+
+            <motion.section className="math-foundation" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.45 }}>
+                <h2>Core Concepts in Classification</h2>
+                <p style={{ color: 'var(--text-secondary)', marginBottom: 20, maxWidth: '70ch' }}>
+                    Classification models learn to draw boundaries in feature space. The math varies by algorithm, but evaluation metrics are shared across all.
+                </p>
+                <div className="grid-2" style={{ gap: 24, alignItems: 'start' }}>
+                    <div>
+                        <h3 style={{ marginBottom: 12 }}>The Sigmoid Function</h3>
+                        <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: 16 }}>
+                            The sigmoid squashes any real number into [0, 1], making it perfect for probability estimation.
+                        </p>
+                        <MathBlock label="Sigmoid">{'\\sigma(z) = \\frac{1}{1 + e^{-z}}'}</MathBlock>
+                        <MathBlock label="Log-Odds (Logit)">{'\\log \\frac{p}{1-p} = \\theta^T x'}</MathBlock>
+                    </div>
+                    <div>
+                        <h3 style={{ marginBottom: 12 }}>Evaluation Metrics</h3>
+                        <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: 16 }}>
+                            Beyond accuracy: precision asks "of predicted positives, how many are correct?", recall asks "of actual positives, how many did we find?"
+                        </p>
+                        <MathBlock label="Precision">{'\\text{Precision} = \\frac{TP}{TP + FP}'}</MathBlock>
+                        <MathBlock label="Recall">{'\\text{Recall} = \\frac{TP}{TP + FN}'}</MathBlock>
+                        <MathBlock label="F1 Score">{'F_1 = 2 \\cdot \\frac{\\text{Precision} \\cdot \\text{Recall}}{\\text{Precision} + \\text{Recall}}'}</MathBlock>
+                    </div>
+                </div>
+            </motion.section>
+
+            {/* ═══════ ALGORITHM DEEP DIVES ═══════ */}
+            <div className="section-divider-labeled"><span>Algorithm Deep Dives</span></div>
+
+            <motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.45 }}>
+                <h2 style={{ marginBottom: 8 }}>Understanding Each Classifier</h2>
+                <p style={{ color: 'var(--text-secondary)', marginBottom: 20 }}>
+                    Click any algorithm to see its math, intuition, and tradeoffs. The selected one will be used in the Experiment step.
+                </p>
+                {ALGORITHM_DIVES.map((algo) => (
+                    <AlgorithmDeepDive key={algo.id} {...algo} active={algorithm === algo.id} onSelect={setAlgorithm} />
+                ))}
+            </motion.section>
+
+            {/* ═══════ COMPARISON TABLE ═══════ */}
+            <ComparisonTable
+                caption="📊 Classifier Comparison"
+                headers={['Algorithm', 'Boundary Type', 'Training Speed', 'Interpretability', 'Best For']}
+                rows={[
+                    ['Logistic Regression', 'Linear', '⚡ Very Fast', '✅ High', 'Probability estimates, linear problems'],
+                    ['KNN', 'Non-linear', '⚡ Instant (lazy)', '⚠️ Medium', 'Small data, complex boundaries'],
+                    ['SVM', 'Linear/Non-linear', '🐌 Moderate', '⚠️ Medium', 'Clear margin separation'],
+                    ['Naive Bayes', 'Linear', '⚡ Very Fast', '✅ High', 'Text classification, small data'],
+                    ['Decision Tree', 'Non-linear', '⚡ Fast', '✅ Very High', 'Interpretability, feature importance'],
+                ]}
+            />
+
+            {/* ═══════ INTERACTIVE LAB ═══════ */}
+            <div className="section-divider-labeled"><span>Interactive Lab</span></div>
 
             {/* Step Indicator */}
             <div className="step-indicator">
@@ -223,31 +415,63 @@ export default function ClassificationLab() {
                 {/* ──── STEP 1: UNDERSTAND ──── */}
                 {step === 0 && (
                     <div className="step-content">
-                        <div className="tab-bar">
-                            {CONCEPTS.map((c, i) => (
-                                <button
-                                    key={c}
-                                    className={i === concept ? 'active' : ''}
-                                    onClick={() => setConcept(i)}
-                                >
-                                    {c}
-                                </button>
-                            ))}
+                        <h2>Concept Deep Dives</h2>
+                        <p style={{ color: 'var(--text-secondary)', marginBottom: 24 }}>
+                            Follow the narrative below — each classifier introduces a fundamentally different way of thinking about decision boundaries.
+                        </p>
+
+                        <div className="narrative-flow">
+
+                            {/* ── 1. Logistic Regression ── */}
+                            <div className="narrative-section">
+                                <div className="narrative-header">
+                                    <span className="narrative-step-badge">1</span>
+                                    <h3>Probability-Based Decisions: Logistic Regression</h3>
+                                </div>
+                                <TeachingFrame
+                                    title="Logistic Regression — Beginner Lens"
+                                    background={CONCEPT_GUIDES[0].background}
+                                    what={CONCEPT_GUIDES[0].what}
+                                    why={CONCEPT_GUIDES[0].why}
+                                    how={CONCEPT_GUIDES[0].how}
+                                    tryThis={CONCEPT_GUIDES[0].tryThis}
+                                />
+                                <div className="concept-area" style={{ marginTop: 24 }}>
+                                    <LogisticRegressionConcept />
+                                </div>
+                            </div>
+
+                            <div className="narrative-transition">
+                                Logistic Regression draws a <strong>linear boundary</strong> using probability. But what if the true decision boundary is curved or irregular? Let's explore a fundamentally different, assumption-free approach…
+                            </div>
+
+                            {/* ── 2. k-Nearest Neighbors ── */}
+                            <div className="narrative-section">
+                                <div className="narrative-header">
+                                    <span className="narrative-step-badge">2</span>
+                                    <h3>Learning by Example: k-Nearest Neighbors</h3>
+                                </div>
+                                <TeachingFrame
+                                    title="k-Nearest Neighbors — Beginner Lens"
+                                    background={CONCEPT_GUIDES[1].background}
+                                    what={CONCEPT_GUIDES[1].what}
+                                    why={CONCEPT_GUIDES[1].why}
+                                    how={CONCEPT_GUIDES[1].how}
+                                    tryThis={CONCEPT_GUIDES[1].tryThis}
+                                />
+                                <div className="concept-area" style={{ marginTop: 24 }}>
+                                    <KNNConcept />
+                                </div>
+                            </div>
+
                         </div>
 
-                        <TeachingFrame
-                            title={`${CONCEPTS[concept]} — Beginner Lens`}
-                            background={CONCEPT_GUIDES[concept].background}
-                            what={CONCEPT_GUIDES[concept].what}
-                            why={CONCEPT_GUIDES[concept].why}
-                            how={CONCEPT_GUIDES[concept].how}
-                            tryThis={CONCEPT_GUIDES[concept].tryThis}
-                        />
-
-                        <div className="concept-area" style={{ marginTop: 24 }}>
-                            {concept === 0 && <LogisticRegressionConcept />}
-                            {concept === 1 && <KNNConcept />}
-                        </div>
+                        <KeyTakeaways items={[
+                            'The sigmoid function converts linear scores to probabilities for threshold-based classification.',
+                            'KNN makes no assumptions — it lets data speak directly through neighbor voting.',
+                            'Accuracy is misleading with imbalanced classes. Use Precision, Recall, and F1 instead.',
+                            'Decision boundaries can be linear or non-linear — choose the algorithm based on data geometry.',
+                        ]} />
 
                         <div className="step-actions">
                             <button className="btn btn-primary" onClick={handleGoNext}>
@@ -261,6 +485,24 @@ export default function ClassificationLab() {
                 {step === 1 && (
                     <div className="step-content">
                         <h2>Configure & Explore</h2>
+
+                        {/* Algorithm Selector in Experiment */}
+                        <h3 style={{ marginBottom: 12 }}>Choose Classifier</h3>
+                        <p style={{ color: 'var(--text-secondary)', marginBottom: 12, fontSize: '0.9rem' }}>
+                            Select the classification algorithm to use. Scroll up to the Algorithm Deep Dives to understand each one.
+                        </p>
+                        <div className="algo-selector" style={{ marginBottom: 20 }}>
+                            {ALGORITHMS.map((a) => (
+                                <button
+                                    key={a.id}
+                                    className={`algo-pill ${algorithm === a.id ? 'active' : ''}`}
+                                    style={{ '--pill-color': a.color }}
+                                    onClick={() => setAlgorithm(a.id)}
+                                >
+                                    {a.label}
+                                </button>
+                            ))}
+                        </div>
 
                         {/* Data Shape */}
                         <div className="config-section">
@@ -477,7 +719,7 @@ export default function ClassificationLab() {
                                         <strong>🎉 Achievement Unlocked!</strong><br />
                                         You mastered non-linear classification!
                                     </p>
-                                    <ChallengeUnlock awardBadge={awardBadge} awardXP={awardXP} />
+                                    <ChallengeUnlock awardBadge={awardBadge} awardXP={awardXP} badge="Classification Master" />
                                 </motion.div>
                             ) : (
                                 <div className="info-card" style={{ marginTop: 20 }}>
@@ -639,14 +881,17 @@ function DecisionBoundaryCanvas({ X, y, yPred, model, algorithm, engine }) {
     );
 }
 
-function ChallengeUnlock({ awardBadge, awardXP }) {
+function ChallengeUnlock({ awardBadge, awardXP, badge }) {
     const [awarded, setAwarded] = useState(false);
-    if (!awarded) {
-        setTimeout(() => {
-            awardBadge('Classification Master');
-            awardXP(100, 'Classification Challenge Complete');
-            setAwarded(true);
-        }, 500);
-    }
+    useEffect(() => {
+        if (!awarded) {
+            const timer = setTimeout(() => {
+                awardBadge(badge);
+                awardXP(100, `${badge} Complete`);
+                setAwarded(true);
+            }, 500);
+            return () => clearTimeout(timer);
+        }
+    }, [awarded, awardBadge, awardXP, badge]);
     return null;
 }

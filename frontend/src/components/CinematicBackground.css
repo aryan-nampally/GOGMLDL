@@ -36,6 +36,12 @@
     animation: glow-drift 30s ease-in-out infinite alternate;
 }
 
+@media (prefers-reduced-motion: reduce) {
+    .cinematic-glows {
+        animation: none;
+    }
+}
+
 @keyframes glow-drift {
     0% {
         transform: translate(0, 0) scale(1);
