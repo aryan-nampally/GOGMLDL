@@ -185,6 +185,11 @@
     vertical-align: top;
 }
 
+.admin-table th:nth-child(5),
+.admin-table td:nth-child(5) {
+    min-width: 360px;
+}
+
 .admin-table tbody tr:hover {
     background: rgba(255, 255, 255, 0.02);
 }
@@ -219,9 +224,12 @@
 }
 
 .row-comment {
-    max-width: 260px;
+    max-width: 520px;
     color: var(--text-secondary);
     line-height: 1.5;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .row-date {

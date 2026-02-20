@@ -3,6 +3,13 @@ import { motion } from 'framer-motion';
 import './Feedback.css';
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
+const MAX_COMMENT_WORDS = 2000;
+
+function countWords(text) {
+    const trimmed = (text || '').trim();
+    if (!trimmed) return 0;
+    return trimmed.split(/\s+/).length;
+}
 
 const AREA_OPTIONS = [
     'UI / Visual Design',
@@ -31,6 +38,8 @@ export default function FeedbackPage() {
     const [areas, setAreas] = useState([]);
     const [comments, setComments] = useState('');
     const [status, setStatus] = useState('idle'); // idle | sending | sent | error
+    const commentWordCount = countWords(comments);
+    const commentTooLong = commentWordCount > MAX_COMMENT_WORDS;
 
     const toggleArea = (area) => {
         setAreas((prev) =>
@@ -42,6 +51,7 @@ export default function FeedbackPage() {
         e.preventDefault();
         if (!name.trim()) return;
         if (rating === 0) return;
+        if (commentTooLong) return;
         setStatus('sending');
 
         try {
@@ -157,16 +167,18 @@ export default function FeedbackPage() {
                         onChange={(e) => setComments(e.target.value)}
                         placeholder="What did you like? What confused you? What's missing? Any bug you noticed?"
                         rows={5}
-                        maxLength={2000}
                     />
-                    <span className="fb-counter">{comments.length}/2000</span>
+                    <span className="fb-counter">{commentWordCount}/{MAX_COMMENT_WORDS} words</span>
+                    {commentTooLong && (
+                        <p className="fb-error">Comments must be 2000 words or fewer.</p>
+                    )}
                 </div>
 
                 {/* Submit */}
                 <button
                     type="submit"
                     className="btn btn-primary fb-submit"
-                    disabled={!name.trim() || rating === 0 || status === 'sending'}
+                    disabled={!name.trim() || rating === 0 || commentTooLong || status === 'sending'}
                 >
                     {status === 'sending' ? 'Sending…' : 'Submit Feedback 📩'}
                 </button>
